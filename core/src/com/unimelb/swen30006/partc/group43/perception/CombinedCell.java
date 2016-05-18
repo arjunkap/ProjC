@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.Color;
 
 public class CombinedCell{
 
-  final Boolean space;
-  final Vector2 velocity;
-  final Color color;
+  public final Boolean space;
+  public final Vector2 velocity;
+  public final Color color;
 
   public CombinedCell(Boolean space, Vector2 velocity, Color color){
     this.space = space;

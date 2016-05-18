@@ -6,14 +6,12 @@ import com.badlogic.gdx.math.Vector2;
 import java.awt.geom.Rectangle2D;
 
 public interface ClassifierAccess {
-
-public Vector2 getPos();
-public Rectangle2D.Double getShape();
-public Float getWidth();
-public Float getLength();
-public Float getDistance();
-public void getVelocity();
-public void getTimeToCollision();
-public void setInformation(String key,Object obj);
-
+  public Vector2 getPos();
+  public Rectangle2D.Double getShape();
+  public Float getWidth();
+  public Float getLength();
+  public Float getDistance();
+  public void getVelocity();
+  public void getTimeToCollision();
+  public void setInformation(String key,Object obj);
 }

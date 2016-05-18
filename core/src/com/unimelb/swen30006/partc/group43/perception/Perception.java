@@ -13,6 +13,8 @@ public class Perception{
 
 	public PerceptionResponse[] analyseSurroundings(boolean[][] spaceMap, Color[][] colorMap, Vector2[][] velMap){
 
+    return new PerceptionResponse[0];
+
   }
 
 }

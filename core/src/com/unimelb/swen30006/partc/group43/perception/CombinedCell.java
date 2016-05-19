@@ -14,4 +14,13 @@ public class CombinedCell{
     this.color = color;
   }
 
+  @Override
+  public String toString(){
+    if (this.space){
+      return "*";
+    }else{
+      return ".";
+    }
+  }
+
 }

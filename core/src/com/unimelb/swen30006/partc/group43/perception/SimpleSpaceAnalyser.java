@@ -4,9 +4,12 @@ import com.unimelb.swen30006.partc.group43.perception.CombinedCell;
 import com.unimelb.swen30006.partc.group43.perception.SpaceAnalyserReturn;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Collections;
 
 public class SimpleSpaceAnalyser implements SpaceAnalyser{
 
@@ -39,9 +42,13 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
           }
 
           System.out.println("Shape Found!");
+          Rectangle s  = new Rectangle();
           for(Cell c : shape){
-            System.out.print(c + " ");
+            System.out.print("("+c +")"+ " ");
+            s.add(c.x,c.y);
           }
+          System.out.println(s);
+          System.out.println(calculateDimension(shape));
           System.out.println("\n-------------");
 
         }
@@ -54,9 +61,6 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
   private void searchAround(LinkedList<Cell> toLookList,HashMap<String,Boolean> lookedThisObject){
 
     Cell cell =  toLookList.pop();
-    //System.out.println("rem -- " + toLookList.size());
-
-    //printSearchCells();
 
     if( cellLValid(cell) && !cellInIncluded(cell.left()) && !cellInMap(cell.left(),lookedThisObject)  ){
       lookedThisObject.put(cell.left().toString(),true);
@@ -139,6 +143,27 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
     return (c.x +1 < map.length ) ? true :false;
   }
 
+  private ObjectProperties calculateDimension(LinkedList<Cell> shape){
+
+    ArrayList<Integer> rowHeight = new ArrayList<Integer>();
+    ArrayList<Integer> colLength = new ArrayList<Integer>();
+
+    for(Cell c : shape){
+      rowHeight.add(c.x);
+      colLength.add(c.y);
+    }
+
+    int rowMin = Collections.min(rowHeight);
+    int rowMax = Collections.max(rowHeight);
+    int colMin = Collections.min(colLength);
+    int colMax = Collections.max(colLength);
+
+    return new ObjectProperties(colMax - colMin +1,
+                                rowMax - rowMin +1,
+                         new Point2D.Float(Float.valueOf(rowMin) + (Float.valueOf(rowMax-rowMin)/Float.valueOf(2)), 
+                           Float.valueOf(colMin) + (Float.valueOf(colMax-colMin)/Float.valueOf(2))));
+  }
+
   private class Cell{
     // x are map rows
     public final int x;
@@ -173,6 +198,25 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
 
     public String toString(){
       return String.valueOf(x)+","+String.valueOf(y);
+    }
+
+  }
+
+  private class ObjectProperties{
+
+    public final int width;
+    public final int height;
+    public final  Point2D.Float pos;
+
+    public ObjectProperties(int width, int height,Point2D.Float pos){
+      this.height = height;
+      this.width = width;
+      this.pos = pos;
+    }
+
+    public String toString(){
+      return "Width : " + String.valueOf(width) + " Height : " + String.valueOf(height) + " Position : " + pos.toString() ;
+
     }
 
   }

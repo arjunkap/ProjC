@@ -31,11 +31,14 @@ public class Perception implements IPerception{
 
   public void test(){
 
-    CombinedCell[][] map = new CombinedCell[4][4];
-    boolean[][] b = new boolean[][]{{true,true,false,true},
-                                    {true,false,true,false},
-                                    {true,false,true,false},
-                                    {true,false,true,true}};
+    CombinedCell[][] map = new CombinedCell[7][7];
+    boolean[][] b = new boolean[][]{{true,true,false,true,true,true,false},
+                                    {true,false,true,false,true,true,true},
+                                    {true,false,true,false,true,true,true},
+                                    {false,false,true,false,true,true,true},
+                                    {true,false,true,false,true,true,true},
+                                    {true,false,true,false,true,true,true},
+                                    {true,false,true,true,false,false,false}};
 
     for(int i = 0 ; i < b.length ; i++){
       for(int j = 0 ; j < b[0].length ; j ++){

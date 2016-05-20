@@ -10,23 +10,39 @@ import java.util.LinkedList;
 
 public class SimpleSpaceAnalyser implements SpaceAnalyser{
 
-  HashMap<String,Boolean> searchedCells = new HashMap<String,Boolean>();
-
+  HashMap<String,Boolean> includedCells= new HashMap<String,Boolean>();
   CombinedCell[][] map = null;
 
   public ArrayList<SpaceAnalyserReturn> getObjects(CombinedCell[][] map){
 
     this.map = map;
+    includedCells = new HashMap<String,Boolean>();
 
     for(int i = 0 ; i < map.length ; i++){
       for(int j = 0 ; j < map[0].length ; j ++){
-        
-        if( map[i][j].space ){
-          LinkedList<String> toLookList = new LinkedList<String>();
-          toLookList.push(toKey(i,j));
-          searchedCells.put(toKey(i,j),true);
 
-          searchAround(searchedCells,toLookList);
+        Cell cell = new Cell(i,j);
+        
+        if( map[i][j].space && !cellInIncluded(cell)){
+
+          LinkedList<Cell> toLookList = new LinkedList<Cell>();
+          LinkedList<Cell> shape = new LinkedList<Cell>();
+          HashMap<String,Boolean> lookedThisObject = new HashMap<String,Boolean>();
+          toLookList.push(cell);
+          includedCells.put(toKey(i,j),true);
+          lookedThisObject.put(cell.toString(),true);
+
+          while(toLookList.size() > 0){
+            //System.out.println(toLookList.size());
+            shape.push(toLookList.peek());
+            searchAround(toLookList,lookedThisObject);
+          }
+
+          System.out.println("Shape Found!");
+          for(Cell c : shape){
+            System.out.print(c + " ");
+          }
+          System.out.println("\n-------------");
 
         }
       }
@@ -35,32 +51,57 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
     return new ArrayList<SpaceAnalyserReturn>();
   }
 
-  private void searchAround(HashMap<String,Boolean> searchedCells,LinkedList<String> toLookList){
+  private void searchAround(LinkedList<Cell> toLookList,HashMap<String,Boolean> lookedThisObject){
 
-    String cellString = toLookList.pop();
-    Cell cell = new Cell(fromKey(cellString));
+    Cell cell =  toLookList.pop();
+    //System.out.println("rem -- " + toLookList.size());
 
-    if( cellLValid(cell) ){
+    //printSearchCells();
+
+    if( cellLValid(cell) && !cellInIncluded(cell.left()) && !cellInMap(cell.left(),lookedThisObject)  ){
+      lookedThisObject.put(cell.left().toString(),true);
       if (map[cell.left().x][cell.left().y].space){
+        toLookList.push(cell.left());
+        addToIncludedCells(cell.left());
       }
     }
 
-    if( cellRValid(cell) ){
+    if( cellRValid(cell) && !cellInIncluded(cell.right()) && !cellInMap(cell.right(),lookedThisObject) ){ 
+      lookedThisObject.put(cell.right().toString(),true);
       if (map[cell.right().x][cell.right().y].space){
+        toLookList.push(cell.right());
+        addToIncludedCells(cell.right());
       }
     }
 
-    if( cellTValid(cell) ){
+    if( cellTValid(cell) && !cellInIncluded(cell.top()) && !cellInMap(cell.top(),lookedThisObject) ){
+      lookedThisObject.put(cell.top().toString(),true);
       if (map[cell.top().x][cell.top().y].space){
+        toLookList.push(cell.top());
+        addToIncludedCells(cell.top());
       }
     }
 
-    if( cellBValid(cell) ){
+    if( cellBValid(cell) && !cellInIncluded(cell.bot()) && !cellInMap(cell.bot(),lookedThisObject) ){
+      lookedThisObject.put(cell.bot().toString(),true);
       if (map[cell.bot().x][cell.bot().y].space){
-
+        toLookList.push(cell.bot());
+        addToIncludedCells(cell.bot());
       }
     }
 
+  }
+
+  private void addToIncludedCells(Cell c){
+    includedCells.put(c.toString(),true);
+  }
+
+  private boolean cellInMap(Cell c,HashMap<String,Boolean> map){
+    return map.containsKey(c.toString());
+  }
+
+  private boolean cellInIncluded(Cell c){
+    return includedCells.containsKey(c.toString());
   }
 
   private String toKey(int i,int j){
@@ -73,6 +114,13 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
     ret[0] = Integer.valueOf(s[0]);
     ret[1] = Integer.valueOf(s[1]);
     return ret;
+  }
+
+  private void printSearchCells(){
+    for(String s : includedCells.keySet() ){
+      System.out.print(s);
+      System.out.print(" ");
+    }
   }
 
   public boolean cellLValid (Cell c){
@@ -92,7 +140,9 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
   }
 
   private class Cell{
+    // x are map rows
     public final int x;
+    // y are map columns
     public final int y;
 
     public Cell(int x,int y){
@@ -122,7 +172,7 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
     }
 
     public String toString(){
-      return String.valueOf(x)+"-"+String.valueOf(y);
+      return String.valueOf(x)+","+String.valueOf(y);
     }
 
   }

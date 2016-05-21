@@ -235,13 +235,13 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
       this.height = height;
       this.width = width;
       this.pos = pos;
-      this.distance = (float) Math.sqrt(Double.valueOf(Math.pow(pos.x - (mapHeight/2.0),2.0) + Math.pow(pos.y - (mapHeight/2.0),2.0)));
-      this.distanceVec = new Vector2();
+      this.distanceVec = new Vector2((float)(pos.x - (mapHeight/2.0)),(float)(pos.y - (mapHeight/2.0)) );
 
     }
 
     public String toString(){
-      return "Width : " + String.valueOf(width) + " Height : " + String.valueOf(height) + " Position : " + pos.toString() + " Distance : " + String.valueOf(distance) ;
+      return "Width : " + String.valueOf(width) + " Height : " + String.valueOf(height) + " Position : " + pos.toString() 
+        + " Distance Vector : " + distanceVec + " Vec length : " + distanceVec.len() ;
 
     }
 

@@ -13,12 +13,16 @@ import java.util.Collections;
 
 public class SimpleSpaceAnalyser implements SpaceAnalyser{
 
-  HashMap<Cell,Boolean> includedCells= new HashMap<Cell,Boolean>();
-  CombinedCell[][] map = null;
+  private HashMap<Cell,Boolean> includedCells= new HashMap<Cell,Boolean>();
+  private CombinedCell[][] map = null;
+  private int mapHeight;
+  private int mapWidth;
 
   public ArrayList<SpaceAnalyserReturn> getObjects(CombinedCell[][] map){
 
     this.map = map;
+    this.mapHeight = map.length;
+    this.mapWidth = map[0].length;
     includedCells = new HashMap<Cell,Boolean>();
 
     for(int i = 0 ; i < map.length ; i++){
@@ -58,13 +62,20 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
     return new ArrayList<SpaceAnalyserReturn>();
   }
 
+  private CombinedCell mapGet(Cell c){
+
+    return this.map[c.y][c.x];
+
+  }
+
+
   private void searchAround(LinkedList<Cell> toLookList,HashMap<Cell,Boolean> lookedThisObject){
 
     Cell cell =  toLookList.pop();
 
     if( cellLValid(cell) && !cellInIncluded(cell.left()) && !cellInMap(cell.left(),lookedThisObject)  ){
       lookedThisObject.put(cell.left(),true);
-      if (map[cell.left().x][cell.left().y].space){
+      if (mapGet(cell.left()).space){
         toLookList.push(cell.left());
         addToIncludedCells(cell.left());
       }
@@ -72,7 +83,7 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
 
     if( cellRValid(cell) && !cellInIncluded(cell.right()) && !cellInMap(cell.right(),lookedThisObject) ){ 
       lookedThisObject.put(cell.right(),true);
-      if (map[cell.right().x][cell.right().y].space){
+      if (mapGet(cell.right()).space){
         toLookList.push(cell.right());
         addToIncludedCells(cell.right());
       }
@@ -80,7 +91,7 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
 
     if( cellTValid(cell) && !cellInIncluded(cell.top()) && !cellInMap(cell.top(),lookedThisObject) ){
       lookedThisObject.put(cell.top(),true);
-      if (map[cell.top().x][cell.top().y].space){
+      if (mapGet(cell.top()).space){
         toLookList.push(cell.top());
         addToIncludedCells(cell.top());
       }
@@ -88,7 +99,7 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
 
     if( cellBValid(cell) && !cellInIncluded(cell.bot()) && !cellInMap(cell.bot(),lookedThisObject) ){
       lookedThisObject.put(cell.bot(),true);
-      if (map[cell.bot().x][cell.bot().y].space){
+      if (mapGet(cell.bot()).space){
         toLookList.push(cell.bot());
         addToIncludedCells(cell.bot());
       }
@@ -116,19 +127,19 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
   }
 
   public boolean cellLValid (Cell c){
-    return (c.y - 1 >= 0 ) ? true : false;
+    return (c.x - 1 >= 0 ) ? true : false;
   }
 
   public boolean cellRValid (Cell c){
-    return ( c.y +1 < map[0].length ) ? true : false ;
+    return ( c.x +1 < mapWidth ) ? true : false ;
   }
 
   public boolean cellTValid (Cell c){
-    return (c.x -1 >= 0 ) ? true :false;
+    return (c.y -1 >= 0 ) ? true :false;
   }
 
   public boolean cellBValid (Cell c){
-    return (c.x +1 < map.length ) ? true :false;
+    return (c.y +1 < mapHeight) ? true :false;
   }
 
   private ObjectProperties calculateDimension(LinkedList<Cell> shape){
@@ -146,19 +157,21 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
     int colMin = Collections.min(colLength);
     int colMax = Collections.max(colLength);
 
-    return new ObjectProperties(colMax - colMin +1,
-                                rowMax - rowMin +1,
+    return new ObjectProperties(Float.valueOf(colMax - colMin +1),
+                                Float.valueOf(rowMax - rowMin +1),
                          new Point2D.Float(Float.valueOf(rowMin) + (Float.valueOf(rowMax-rowMin)/Float.valueOf(2)), 
-                           Float.valueOf(colMin) + (Float.valueOf(colMax-colMin)/Float.valueOf(2))));
+                           Float.valueOf(colMin) + (Float.valueOf(colMax-colMin)/Float.valueOf(2))),
+                               this.mapWidth,
+                               this.mapHeight);
   }
 
   private class Cell{
-    // x are map rows
+    // x are map columns
     public final int x;
-    // y are map columns
+    // y are map rows
     public final int y;
 
-    public Cell(int x,int y){
+    public Cell(int y,int x){
       this.x = x;
       this.y = y;
     }
@@ -169,19 +182,19 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
     }
 
     public Cell left (){
-      return new Cell(x,y-1);
+      return new Cell(y,x-1);
     }
 
     public Cell right(){
-      return new Cell(x,y+1);
+      return new Cell(y,x+1);
     }
 
     public Cell top(){
-      return new Cell(x-1,y);
+      return new Cell(y-1,x);
     }
 
     public Cell bot(){
-      return new Cell(x+1,y);
+      return new Cell(y+1,x);
     }
 
     public String toString(){
@@ -212,18 +225,23 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
 
   private class ObjectProperties{
 
-    public final int width;
-    public final int height;
+    public final float width;
+    public final float height;
+    public final float distance;
+    public final Vector2 distanceVec;
     public final  Point2D.Float pos;
 
-    public ObjectProperties(int width, int height,Point2D.Float pos){
+    public ObjectProperties(float width, float height,Point2D.Float pos,int mapWidth,int mapHeight){
       this.height = height;
       this.width = width;
       this.pos = pos;
+      this.distance = (float) Math.sqrt(Double.valueOf(Math.pow(pos.x - (mapHeight/2.0),2.0) + Math.pow(pos.y - (mapHeight/2.0),2.0)));
+      this.distanceVec = new Vector2();
+
     }
 
     public String toString(){
-      return "Width : " + String.valueOf(width) + " Height : " + String.valueOf(height) + " Position : " + pos.toString() ;
+      return "Width : " + String.valueOf(width) + " Height : " + String.valueOf(height) + " Position : " + pos.toString() + " Distance : " + String.valueOf(distance) ;
 
     }
 

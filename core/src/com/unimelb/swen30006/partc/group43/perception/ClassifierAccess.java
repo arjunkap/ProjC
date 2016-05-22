@@ -2,16 +2,18 @@ package com.unimelb.swen30006.partc.group43.perception;
 import com.unimelb.swen30006.partc.group43.perception.Classification;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector2;
-import java.awt.geom.Rectangle2D;
+
+import java.awt.geom.Point2D;
+import java.awt.Point;
+import java.util.ArrayList;
 
 public interface ClassifierAccess {
-  public Vector2 getPos();
-  public Rectangle2D.Double getShape();
+  public Point2D.Float getPos();
+  public ArrayList<Point> getShape();
   public Float getWidth();
   public Float getLength();
   public Float getDistance();
-  public void getVelocity();
-  public void getTimeToCollision();
+  public Vector2 getVelocity();
+  public Float getTimeToCollision();
   public void setInformation(String key,Object obj);
 }

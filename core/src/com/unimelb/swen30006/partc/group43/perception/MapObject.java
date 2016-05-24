@@ -21,7 +21,6 @@ private Vector2 velocity;
 private float timeToCollision;
 private HashMap<String,Object> information = new HashMap<String,Object>();
 private Classification objectType;
-private MapObject object;
 
 public MapObject(Point2D.Float pos, ArrayList<Point> shape, float width, float length, float distance){
 	this.pos = pos;
@@ -41,50 +40,61 @@ public PerceptionResponse[] converToPerceptionResponse(ArrayList<SpaceAnalyserRe
 @Override
 public Point2D.Float getPos() {
 	// TODO Auto-generated method stub
-	return object.pos;
+	return this.pos;
 }
 @Override
 public ArrayList<Point> getShape() {
 	// TODO Auto-generated method stub
-	return object.shape;
+	return this.shape;
 }
 @Override
 public Float getWidth() {
 	// TODO Auto-generated method stub
-	return object.width;
+	return this.width;
 }
 @Override
 public Float getLength() {
 	// TODO Auto-generated method stub
-	return object.length;
+	return this.length;
+}
+
+@Override
+public Float getWidthKin() {
+	// TODO Auto-generated method stub
+	return this.width;
+}
+@Override
+public Float getLengthKin() {
+	// TODO Auto-generated method stub
+	return this.length;
 }
 @Override
 public Float getDistance() {
 	// TODO Auto-generated method stub
-	return object.distance;
+	return this.distance;
 }
 @Override
 public Vector2 getVelocity() {
 	// TODO Auto-generated method stub
-	return object.velocity;
+	return this.velocity;
 }
 @Override
 public Float getTimeToCollision() {
 	// TODO Auto-generated method stub
-	return object.timeToCollision;
+	return this.timeToCollision;
 }
 
 public void setObjectType(Classification objecttype){
 	this.objectType = objecttype;
 }
 public Classification getObjectType(){
-	return object.objectType;
+	return this.objectType;
 }
 public Point2D.Float getPosKin(){
-	return object.pos;
+	return this.pos;
 }
 public Float getDistanceKin(){
-	return object.distance;
+	return this.distance;
 }
 public void setInformation(String name,Object mapobject){
 	this.information.put(name, mapobject);

@@ -179,6 +179,7 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
     }
   }
 
+  // TODO Replace all thsee with one CellValid funciton
   private boolean cellLValid (Cell c){
     return (c.x - 1 >= 0 ) ? true : false;
   }
@@ -222,10 +223,12 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
     float height = Float.valueOf(rowMax - rowMin +1);
     float posy = Float.valueOf(rowMin) + (Float.valueOf(rowMax-rowMin)/Float.valueOf(2));
     float posx = Float.valueOf(colMin) + (Float.valueOf(colMax-colMin)/Float.valueOf(2));
+    // reverting to standard definition of bottom being a negative with respect to y cord
     Point2D.Float pos =  new Point2D.Float(posx,posy); 
-    Vector2 distanceVec = new Vector2( (float)(pos.x -(mapHeight/2.0)),(float)((mapHeight/2.0))-pos.y );
+    // Direction relative to the car
+    Vector2 directionVec = new Vector2( (float)(pos.x -(mapHeight/2.0)),(float)((mapHeight/2.0))-pos.y );
 
-    return new SpaceAnalyserReturn(pos,pointShape, width,height, distanceVec.len(),distanceVec);
+    return new SpaceAnalyserReturn(pos,pointShape, width,height, directionVec.len(),directionVec);
 
   }
 
@@ -234,8 +237,13 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
    * the CombinedCell[][]. It facilitates easy
    * translation and identification of the
    * cells within the map.
+   *
+   * 0,0 is the top left corner of the map
+   * x is positive to the right.
+   * y is positive to the bottom.
    */
   private class Cell{
+
     // x are map columns
     private final int x;
     // y are map rows

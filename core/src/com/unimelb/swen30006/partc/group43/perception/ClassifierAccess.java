@@ -1,5 +1,6 @@
 package com.unimelb.swen30006.partc.group43.perception;
-import com.unimelb.swen30006.partc.group43.perception.Classification;
+
+import com.unimelb.swen30006.partc.ai.interfaces.PerceptionResponse.Classification;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
@@ -16,4 +17,5 @@ public interface ClassifierAccess {
   public Vector2 getVelocity();
   public Float getTimeToCollision();
   public void setInformation(String key,Object obj);
+  public void setObjectType(Classification type);
 }

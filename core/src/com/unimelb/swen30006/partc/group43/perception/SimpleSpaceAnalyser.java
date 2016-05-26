@@ -43,6 +43,18 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
       System.out.println("Center x: " + this.mapWidth/2 +" y: " + this.mapHeight/2);
     }
 
+    // Look for non-physical objects (can't be collided with)
+    // RoadMarkings(Roads) and LaneMarkings
+    for(int i = 0 ; i < map.length ; i++){
+      for(int j = 0 ; j < map[0].length ; j ++){
+        if( map[i][j].space && (map[i][j].color == Color.DARK_GRAY || map[i][j].color == Color.DARK_GRAY)){
+          LinkedList<Cell> shape = new LinkedList<Cell>();
+          ret.add(calculateDimension(shape));
+        }
+      }
+    }
+
+    // Look for physical objects (which can be collided with)
     for(int i = 0 ; i < map.length ; i++){
       for(int j = 0 ; j < map[0].length ; j ++){
 

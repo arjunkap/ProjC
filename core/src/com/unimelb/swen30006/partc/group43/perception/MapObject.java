@@ -1,5 +1,6 @@
 package com.unimelb.swen30006.partc.group43.perception;
 import com.unimelb.swen30006.partc.ai.interfaces.PerceptionResponse;
+import com.unimelb.swen30006.partc.ai.interfaces.PerceptionResponse.Classification;
 import com.unimelb.swen30006.partc.group43.perception.ClassifierAccess;
 import com.unimelb.swen30006.partc.group43.perception.KinematicAccess;
 
@@ -18,6 +19,7 @@ private float width;
 private float length;
 private float distance;
 private Vector2 velocity;
+private Vector2 relativeVelocity;
 private float timeToCollision;
 private HashMap<String,Object> information = new HashMap<String,Object>();
 private Classification objectType;
@@ -29,14 +31,17 @@ public MapObject(Point2D.Float pos, ArrayList<Point> shape, float width, float l
 	this.length = length;
 	this.distance = distance;
 }
-public PerceptionResponse[] converToPerceptionResponse(ArrayList<SpaceAnalyserReturn> ret){
-	PerceptionResponse response[] = new PerceptionResponse[ret.size()];
-	for(int i = 0; i<=ret.size(); i++){
-		response[i] = (PerceptionResponse) ret.toArray()[i]; 
-	}
-	return response;
-	
+
+public PerceptionResponse convertToPerceptionResponse(){
+	return new PerceptionResponse(this.distance, 
+                                this.relativeVelocity, 
+                                new Vector2(pos.x,pos.y), 
+                                this.timeToCollision,
+                                objectType, 
+                                information);
 }
+
+
 @Override
 public Point2D.Float getPos() {
 	// TODO Auto-generated method stub
@@ -84,9 +89,15 @@ public Float getTimeToCollision() {
 	return this.timeToCollision;
 }
 
-public void setObjectType(Classification objecttype){
-	this.objectType = objecttype;
+@Override
+public void setObjectType(Classification type){
+  this.objectType = type;
 }
+
+public void setRelativeVelocity(Vector2 velocity){
+  this.relativeVelocity = velocity;
+}
+
 public Classification getObjectType(){
 	return this.objectType;
 }

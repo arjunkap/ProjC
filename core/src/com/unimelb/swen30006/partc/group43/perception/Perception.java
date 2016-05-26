@@ -1,6 +1,7 @@
 package com.unimelb.swen30006.partc.group43.perception;
 
 import com.unimelb.swen30006.partc.ai.interfaces.PerceptionResponse;
+import com.unimelb.swen30006.partc.ai.interfaces.PerceptionResponse.Classification;
 import com.unimelb.swen30006.partc.ai.interfaces.IPerception;
 import com.unimelb.swen30006.partc.core.objects.Car;
 
@@ -9,8 +10,9 @@ import com.unimelb.swen30006.partc.group43.perception.SimpleSpaceAnalyser;
 import com.unimelb.swen30006.partc.group43.perception.SpaceAnalyser;
 import com.unimelb.swen30006.partc.group43.perception.KinematicAnalyser;
 import com.unimelb.swen30006.partc.group43.perception.SimpleKinematicAnalyser;
-import com.unimelb.swen30006.partc.group43.perception.SimpleKinematicAnalyser;
+import com.unimelb.swen30006.partc.group43.perception.SimpleClassifier;
 import com.unimelb.swen30006.partc.group43.perception.MapObject;
+import com.unimelb.swen30006.partc.group43.perception.Range;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
@@ -28,17 +30,14 @@ public class Perception implements IPerception{
 
   SpaceAnalyser spaceAnalyser = new SimpleSpaceAnalyser();
   KinematicAnalyser kinematicAnalyser = new SimpleKinematicAnalyser();
+  SimpleClassifier classifier = new SimpleClassifier(); 
   ArrayList<MapObject> objects = new ArrayList<MapObject>();
 
   public Perception(){
   }
 
-
-	public PerceptionResponse[] analyseSurroundings(boolean[][] spaceMap, Color[][] colorMap, Vector2[][] velMap){
-     return new PerceptionResponse[0];
-  }
-
   public void test(){
+    Range<Integer> a = new Range<Integer>(2,4);
 
     CombinedCell[][] map = new CombinedCell[7][7];
     boolean[][] b = new boolean[][]{{true,true,false,true,true,true,false},
@@ -62,6 +61,18 @@ public class Perception implements IPerception{
       System.out.print("\n");
     }
 
+  }
+
+
+	public PerceptionResponse[] analyseSurroundings(boolean[][] spaceMap, Color[][] colorMap, Vector2[][] velMap){
+
+    CombinedCell[][] map = new CombinedCell[7][7];
+    for(int i = 0 ; i < spaceMap.length ; i++){
+      for(int j = 0 ; j < spaceMap[0].length ; j ++){
+        map[i][j] = new CombinedCell(spaceMap[i][j], velMap[i][j], colorMap[i][j]);
+      }
+    }
+
     // Identify Objects
     ArrayList<SpaceAnalyserReturn> returns = spaceAnalyser.getObjects(map);
 
@@ -74,6 +85,17 @@ public class Perception implements IPerception{
     }
 
     // Classfiy the Objects
+    for(MapObject object: objects){
+      classifier.classify(object,map);
+    }
+
+    PerceptionResponse[] ret = new PerceptionResponse[objects.size()];
+
+    for(int i = 0; i < objects.size(); i++){
+      ret[i] = objects.get(i).convertToPerceptionResponse();
+    }
+
+    return ret;
 
   }
 
@@ -85,21 +107,6 @@ public class Perception implements IPerception{
     }
 
     return newObjects;
-  }
-
-  public void test2(){
-
-    Point2D.Float aP = new Point2D.Float(0,0);
-    Point2D.Float bP = new Point2D.Float(2,0);
-    Vector2 aVel = new Vector2(1,-1);
-    Vector2 bVel = new Vector2(-1,-1);
-    aVel.scl(1/aVel.len());
-    bVel.scl(1/bVel.len());
-    ((SimpleKinematicAnalyser) kinematicAnalyser).carVel = new Vector2(2,2);
-    ((SimpleKinematicAnalyser) kinematicAnalyser).mapHeight = 20;
-
-    System.out.println(((SimpleKinematicAnalyser) kinematicAnalyser).timeTillCollision(aP, aVel, bP, bVel, 0.4f));
-
   }
 
 }

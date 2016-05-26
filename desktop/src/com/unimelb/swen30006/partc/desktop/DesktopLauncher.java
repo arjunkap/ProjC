@@ -9,7 +9,7 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 
     Perception p = new Perception();
-    p.test();
+    //p.analyseSurroundings();
 
     /*
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();

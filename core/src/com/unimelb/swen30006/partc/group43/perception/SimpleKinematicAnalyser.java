@@ -5,6 +5,10 @@ import com.badlogic.gdx.math.Vector2;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
+/**
+ * SimpleKinematicAnalyser determines the velocity and
+ * the time to collision properties of the MapObject.
+ */
 public class SimpleKinematicAnalyser implements KinematicAnalyser{
 
   public Vector2 carVel = null;
@@ -39,8 +43,6 @@ public class SimpleKinematicAnalyser implements KinematicAnalyser{
                                          new Point2D.Float((float) mapWidth/2.0f,(float) mapHeight/-2.0f),
                                          currentVelocity,
                                          objectWidth/2);
-    System.out.println(timeToColl);
-
     mapObject.setVelocity(vel);
     mapObject.setTimeToCollision(timeToColl);
   }

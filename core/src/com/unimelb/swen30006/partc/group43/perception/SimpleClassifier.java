@@ -58,9 +58,8 @@ public class SimpleClassifier implements Classifier {
     ObjectTemplate carTemplate = new ObjectTemplate( new Range<Float>(2.0f,20.0f),
                                    new Range<Float>(2.0f,20.0f),
                                    new Range<Float>(0.0f,200.0f),
-                                   trafficColors,
+                                   new ArrayList<Color>(),
                                    Classification.Car);
-
     carTemplate.setAllowAnyColorTrue();
     objectTemplates.add(carTemplate);
 
@@ -85,6 +84,9 @@ public class SimpleClassifier implements Classifier {
   }
 
 
+  /**
+   * Classify the object given
+   */
   public void classify(ClassifierAccess mapObject,CombinedCell[][] map){
 
     for(ObjectTemplate m : objectTemplates ){
@@ -101,7 +103,10 @@ public class SimpleClassifier implements Classifier {
 
   }
 
-  public boolean handleTrafficLight(ClassifierAccess mapObject, CombinedCell[][] map){
+  /**
+   * Determine the state which the traffic light is in.
+   */
+  private boolean handleTrafficLight(ClassifierAccess mapObject, CombinedCell[][] map){
     ArrayList<Color> colors = colorsAtMapObject(mapObject, map);
     if( colors.contains(Color.YELLOW)){
       mapObject.setInformation("State",TrafficLight.State.Amber);
@@ -123,6 +128,10 @@ public class SimpleClassifier implements Classifier {
   }
 
 
+  /**
+   * Return an arrary of colors wich describe the
+   * shape of the current object.
+   */
   private ArrayList<Color> colorsAtMapObject(ClassifierAccess mapObject,CombinedCell[][] map){
     ArrayList<Point> shape = mapObject.getShape();
     ArrayList<Color> colors = new ArrayList<Color>();

@@ -19,6 +19,7 @@ import com.badlogic.gdx.math.Vector2;
 import java.awt.geom.Point2D;
 import java.awt.Point;
 import java.util.ArrayList;
+
 /**
  * This class is the implementation of IPerception Interface.
  * It acts as a controller for cordination the different subcomponents

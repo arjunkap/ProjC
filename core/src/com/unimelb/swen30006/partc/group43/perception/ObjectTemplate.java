@@ -6,6 +6,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.Color;
 import java.util.ArrayList;
 
+/**
+ * Represents a general description of an object type.
+ * Used by the classifier to determine if a candidate object
+ * is of the type described by this class.
+ */
 public class ObjectTemplate{
 
   private Range<Float> lengthRange = null;
@@ -14,9 +19,6 @@ public class ObjectTemplate{
   private ArrayList<Color> colorRange = null;
   private Classification typeWithinRange = null;
   private boolean allowAnyColor = false;
-
-
-
 
   public ObjectTemplate(Range<Float> lengthRange, Range<Float> widthRange, 
                         Range<Float> speedRange, ArrayList<Color> colorRange,

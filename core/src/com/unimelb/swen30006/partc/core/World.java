@@ -8,8 +8,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.unimelb.swen30006.partc.controllers.AIController;
 import com.unimelb.swen30006.partc.controllers.Controller;
 import com.unimelb.swen30006.partc.controllers.KeyboardController;
+import com.unimelb.swen30006.partc.core.ISteppable;
+import com.unimelb.swen30006.partc.core.MapReader;
 import com.unimelb.swen30006.partc.core.infrastructure.Light;
 import com.unimelb.swen30006.partc.core.objects.Car;
 import com.unimelb.swen30006.partc.core.objects.WorldObject;
@@ -17,6 +20,10 @@ import com.unimelb.swen30006.partc.roads.Intersection;
 import com.unimelb.swen30006.partc.roads.Road;
 import com.varunpant.quadtree.Point;
 import com.varunpant.quadtree.QuadTree;
+
+import com.unimelb.swen30006.partc.group43.perception.Perception;
+import com.unimelb.swen30006.partc.group50.planning.Planners.Planner;
+import com.unimelb.swen30006.partc.group12.sensing.Sensor;
 
 public class World implements ISteppable {
 
@@ -76,8 +83,11 @@ public class World implements ISteppable {
 		// Controllers and cars
 		this.controllers = new Controller[1];
 		this.cars = new Car[1];
-		this.cars[0] = new Car(new Point2D.Double(80,140), 6, 10, Color.CORAL, 25f, 50f, 6f );
-		this.controllers[0] = new KeyboardController(cars[0]);
+		this.cars[0] = new Car(new Point2D.Double(600,600), 6, 10, Color.CORAL, 25f, 50f, 6f );
+		this.controllers[0] = new AIController(cars[0], 
+                              new Sensor(this), 
+                              new Planner(cars[0], roads, new Point2D.Double(600,600)), 
+                              new Perception(cars[0])); 
 
 		// Remaning variables
 		this.worldTime = MIDDAY;
@@ -304,6 +314,14 @@ public class World implements ISteppable {
 				System.out.println("Object: " + o + " at " + o.getPosition());
 			}
 		}
+    /*
+		if(Gdx.input.isKeyPressed(Keys.X)){
+			if (controllers[0].eta()>0.6){
+				System.out.println(controllers[0].eta());
+			}else
+				System.out.println("Reached Destination");
+			}
+     */
 
 	}
 

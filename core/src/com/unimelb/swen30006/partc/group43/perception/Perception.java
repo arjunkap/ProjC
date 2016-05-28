@@ -33,8 +33,10 @@ public class Perception implements IPerception{
   KinematicAnalyser kinematicAnalyser = new SimpleKinematicAnalyser();
   SimpleClassifier classifier = new SimpleClassifier(); 
   ArrayList<MapObject> objects = new ArrayList<MapObject>();
+  private Car car;
 
-  public Perception(){
+  public Perception(Car car){
+    this.car = car;
   }
 
 
@@ -56,7 +58,7 @@ public class Perception implements IPerception{
 
     // Calculate Kinematic properties of the objects
     for(MapObject object : objects){
-      kinematicAnalyser.calculateKinematics(object,map, new Vector2(0,1));
+      kinematicAnalyser.calculateKinematics(object,map, this.car.getVelocity());
     }
 
     // Classfiy the Objects

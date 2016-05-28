@@ -7,12 +7,21 @@ import java.util.Stack;
 import com.badlogic.gdx.math.Vector2;
 import com.unimelb.swen30006.partc.group50.planning.Planners.Route;
 import com.unimelb.swen30006.partc.ai.interfaces.PerceptionResponse;
+import com.unimelb.swen30006.partc.core.infrastructure.TrafficLight;
 import com.unimelb.swen30006.partc.core.objects.Car;
 import com.unimelb.swen30006.partc.group50.planning.vectormap.Node;
 
 public class Driver {
 	private enum Intent{
 		NORTH,WEST,SOUTH,EAST,STOP
+	}
+
+	private enum State{
+		NORMAL,CARBLOCK,UTURN,REDLIGHT
+	}
+
+	private enum carBlockState{
+		AVOIDCAR,STOP,FOLLOWCAR
 	}
 
 	private Intent currIntent=null,nextIntent;
@@ -23,6 +32,7 @@ public class Driver {
 	private final float turningVel =20f;
 	private Route route=null;
 	private final float TURN_RATE=75f;
+	private State state;
 
 
 	public Driver(Car c){
@@ -32,6 +42,7 @@ public class Driver {
 		this.holyAngels.put(Intent.WEST,180f);
 		this.holyAngels.put(Intent.EAST,0f);
 		this.currAngle=0f;
+		this.state = State.NORMAL;
 
 	}
 
@@ -39,9 +50,104 @@ public class Driver {
 		if(r.isNew()){
 			this.route = r;
 			updateDest();
+			currAngle=c.getVelocity().angle();
+			if((currAngle+150)%360<holyAngels.get(currIntent) || (currAngle+210)%360>holyAngels.get(currIntent)) state=State.UTURN;
 		}
-		currAngle=c.getVelocity().angle();
+		if(tl==null)state=(state==State.UTURN)? state:State.NORMAL;
+		else{
+			Object tlState = tl.information.get("State");
+			if(tlState == "Red") state = State.REDLIGHT;
+			else state = State.NORMAL;
+		}
+		if (cars!=null){
+			if (cars.peek().timeToCollision < tl.timeToCollision){
+				state = State.CARBLOCK;		
+			}
 
+
+
+		}
+
+		currAngle=c.getVelocity().angle();
+		switch(state){
+		case CARBLOCK:
+			
+			break;
+		case NORMAL:
+			driveNormal(delta);
+			break;
+		case UTURN:
+			uturn(delta);
+			break;
+		case REDLIGHT:
+			if(tl.distance<40) c.brake();
+			else driveNormal(delta);
+			break;		
+		default:
+			break;
+
+		}
+
+
+
+
+
+	}
+
+	private void uturn(float delta){
+
+		Vector2 dummy = new Vector2((float)(currDest.getX()-c.getPosition().x),(float)(currDest.getY()-c.getPosition().y));
+		switch(currIntent){
+		case EAST:
+			if(c.getVelocity().x*dummy.x <= 0){
+				maintainVelocity(15);
+				c.turn(-delta*150f);
+			}else{
+				if((currAngle+180)%360>(holyAngels.get(currIntent)+180)%360){
+					maintainVelocity(15);
+					c.turn(-150f*delta);
+				}
+				else{
+					state = State.NORMAL;
+				}
+			}
+			break;
+		case WEST:
+			if(c.getVelocity().x*dummy.x <= 0){
+				maintainVelocity(15);
+				c.turn(-delta*150f);
+			}else{
+				if(currAngle>holyAngels.get(currIntent)){
+					maintainVelocity(15);
+					c.turn(-150f*delta);
+				}
+				else{
+					state = State.NORMAL;
+				}
+			}
+			break;
+		case NORTH:
+		case SOUTH:
+			if(c.getVelocity().y*dummy.y <= 0){
+				maintainVelocity(15);
+				c.turn(-delta*150f);
+			}else{
+				if(currAngle>holyAngels.get(currIntent)){
+					maintainVelocity(15);
+					c.turn(-150f*delta);
+				}
+				else{
+					state = State.NORMAL;
+				}
+			}
+			break;
+		case STOP:
+			break;
+
+		}
+	}
+
+	private void driveNormal(float delta){
 		if(currIntent==Intent.EAST || currIntent==Intent.WEST){
 			if(Math.abs(c.getPosition().x-currDest.getX())<50){
 				if(currIntent == nextIntent){
@@ -49,7 +155,7 @@ public class Driver {
 					updateDest();
 				}
 				if(nextIntent==Intent.STOP){
-					
+
 					if(Math.abs(c.getPosition().x-currDest.getX())<3) c.brake();
 					else maintainVelocity(10);
 				}
@@ -76,19 +182,6 @@ public class Driver {
 				}
 			}else maintainAngle(delta);
 		}
-
-
-		//		checkIntent(r);
-		//		
-		//		if(cars.size()==0 && tl==null){
-		//			watchTheRoad(rm,lm);
-		//		}else if(cars.size() > 0 && tl!=null){
-		//			barrelRoll(cars,tl,rm,lm);
-		//		}else if(cars.size()>0){
-		//			avoid(cars,rm,lm);
-		//		}else if(tl!=null){
-		//			dontTextAndDrive(tl.information);
-		//		}
 	}
 
 	private void rightTurn(float delta) {
@@ -124,11 +217,12 @@ public class Driver {
 		currDest=route.getNext();
 		nextDest=route.peek();
 		if(currIntent==null){
-			float dumAngle = new Vector2((float)(currDest.getX()-c.getPosition().x), (float)(currDest.getX()-c.getPosition().y)).angle();
-			if(dumAngle>75 && dumAngle<105) currIntent=Intent.NORTH;
-			else if(dumAngle>165 && dumAngle<195) currIntent=Intent.WEST;
-			else if(dumAngle>255 && dumAngle<285) currIntent=Intent.SOUTH;
+			float dumAngle = new Vector2((float)(currDest.getX()-c.getPosition().x), (float)(currDest.getY()-c.getPosition().y)).angle();
+			if(dumAngle>45 && dumAngle<135) currIntent=Intent.NORTH;
+			else if(dumAngle>135 && dumAngle<235) currIntent=Intent.WEST;
+			else if(dumAngle>235 && dumAngle<315) currIntent=Intent.SOUTH;
 			else currIntent=Intent.EAST;			
+
 		}else{
 			currIntent=nextIntent;
 		}
@@ -141,6 +235,7 @@ public class Driver {
 		}else{
 			nextIntent=Intent.STOP;
 		}
+
 
 	}
 

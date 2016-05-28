@@ -1,4 +1,4 @@
-package com.unimelb.swen30006.partc.vectormap;
+package com.unimelb.swen30006.partc.group50.planning.vectormap;
 
 import java.util.ArrayList;
 import java.util.HashMap;

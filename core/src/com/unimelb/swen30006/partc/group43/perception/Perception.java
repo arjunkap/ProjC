@@ -43,7 +43,17 @@ public class Perception implements IPerception{
 
 	public PerceptionResponse[] analyseSurroundings(boolean[][] spaceMap, Color[][] colorMap, Vector2[][] velMap){
 
-    CombinedCell[][] map = new CombinedCell[7][7];
+    /*
+    system.out.println(colormap);
+    for(int i = 0 ; i < colormap.length ; i++){
+      for(int j = 0 ; j <colormap[0].length ; j ++){
+        system.out.print(colormap[i][j] + ",");
+      }
+        System.out.print("\n");
+    }
+    */
+
+    CombinedCell[][] map = new CombinedCell[spaceMap.length][spaceMap[0].length];
     for(int i = 0 ; i < spaceMap.length ; i++){
       for(int j = 0 ; j < spaceMap[0].length ; j ++){
         map[i][j] = new CombinedCell(spaceMap[i][j], velMap[i][j], colorMap[i][j]);
@@ -131,8 +141,6 @@ public class Perception implements IPerception{
     for(int i = 0; i < objects.size(); i++){
       ret[i] = objects.get(i).convertToPerceptionResponse();
     }
-
-
   }
 
 }

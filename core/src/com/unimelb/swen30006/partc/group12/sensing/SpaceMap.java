@@ -24,10 +24,10 @@ public class SpaceMap {
 		this.mapBoundary=mapBoundary;
 	}
 	private void initSpaceMap(){
-		this.spaceMap=new boolean[visibility*2][visibility*2];
-		for(int x=0;x<visibility*2;x++){
-			for(int y=0;y<visibility*2;y++){
-				this.spaceMap[y][x]=false;
+		this.spaceMap=new boolean[(int) Math.ceil(mapBoundary.height)][(int) Math.ceil(mapBoundary.width)];
+		for(boolean[] s1:spaceMap){
+			for(boolean s2:s1){
+				s2=true;
 			}
 		}
 	}

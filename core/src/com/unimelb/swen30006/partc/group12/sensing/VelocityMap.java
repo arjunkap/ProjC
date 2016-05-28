@@ -28,28 +28,26 @@ public class VelocityMap {
 		this.delta=delta;
 	}
 	private void updateVelocityMap(WorldObject object,Vector2 velocity){
-		int xStartIndex,xEndIndex,yStartIndex,yEndIndex;
+		int iStartIndex,iEndIndex,jStartIndex,jEndIndex;
 		
 		Vector2[] vectors=Calculator.getStartEndIndex(object.boundary, mapBoundary, visibility);
-		xStartIndex=(int) vectors[0].x;
-		yStartIndex=(int) vectors[0].y;
-		xEndIndex=(int) vectors[1].x;
-		yEndIndex=(int) vectors[1].y;
+		iStartIndex=(int) vectors[0].x;
+		jStartIndex=(int) vectors[0].y;
+		iEndIndex=(int) vectors[1].x;
+		jEndIndex=(int) vectors[1].y;
 		
-		for(int x=xStartIndex;x<xEndIndex;x++){
-			for(int y=yStartIndex;y<yEndIndex;y++){
-				velocityMap[y][x]=velocity;
+		for(int i=iStartIndex;i<iEndIndex;i++){
+			for(int j=jStartIndex;j<jEndIndex;j++){
+				velocityMap[i][j]=velocity;
 			}
 		}
 	}
 	
 	private void initVelocityMap(){
-		this.velocityMap=new Vector2[visibility*2][visibility*2];
-		for(int x=0;x<(visibility*2);x++){
-			for(int y=0;y<(visibility*2);y++){
-				velocityMap[y][x]=new Vector2();
-				velocityMap[y][x].x=0;
-				velocityMap[y][x].y=0;
+		this.velocityMap=new Vector2[(int) Math.ceil(mapBoundary.height)][(int) Math.ceil(mapBoundary.width)];
+		for(Vector2[] v1:velocityMap){
+			for(Vector2 v2:v1){
+				v2=new Vector2(0,0);
 			}
 		}
 	}

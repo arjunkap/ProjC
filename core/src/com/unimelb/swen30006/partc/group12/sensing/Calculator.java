@@ -10,40 +10,39 @@ import com.unimelb.swen30006.partc.roads.Intersection;
 
 public class Calculator {
 	
-	
 
 	public static Vector2[] getStartEndIndex(Rectangle2D.Double boundary,Rectangle2D.Double mapBoundary,int visibility){
 		
-		double xStartIndex,xEndIndex,yStartIndex,yEndIndex;
+		double iStartIndex,iEndIndex,jStartIndex,jEndIndex;
 		Vector2[] vector=new Vector2[2];
 		vector[0]=new Vector2();
 		vector[1]=new Vector2();
 
 		
 		if(boundary.x<mapBoundary.x)
-			xStartIndex=0;
+			jStartIndex=0;
 		else
-			xStartIndex=Math.floor(boundary.x-mapBoundary.getMinX());
+			jStartIndex=Math.floor(boundary.x-mapBoundary.getMinX());
 		
 		if(boundary.y<mapBoundary.getMinY())
-			yStartIndex=0;
+			iStartIndex=0;
 		else
-			yStartIndex=Math.floor(boundary.y-mapBoundary.y);
+			iStartIndex=Math.floor(boundary.y-mapBoundary.getMinY());
 		
 		if(boundary.getMaxX()>mapBoundary.getMaxX())
-			xEndIndex=visibility*2;
+			jEndIndex=Math.ceil(mapBoundary.width);
 		else
-			xEndIndex=Math.floor(boundary.getMaxX()-mapBoundary.getMinX());
+			jEndIndex=Math.ceil(boundary.getMaxX()-mapBoundary.getMinX());
 		
 		if(boundary.getMaxY()>mapBoundary.getMaxY())
-			yEndIndex=visibility*2;
+			iEndIndex=Math.ceil(mapBoundary.height);
 		else
-			yEndIndex=Math.floor(boundary.getMaxY()-mapBoundary.getMinY());
+			iEndIndex=Math.ceil(boundary.getMaxY()-mapBoundary.getMinY());
 		
-		vector[0].x=(float)xStartIndex;
-		vector[0].y=(float) yStartIndex;
-		vector[1].x=(float) xEndIndex;
-		vector[1].y=(float) yEndIndex;
+		vector[0].x=(float) iStartIndex;
+		vector[0].y=(float) jStartIndex;
+		vector[1].x=(float) iEndIndex;
+		vector[1].y=(float) jEndIndex;
 		
 		return vector;
 	}

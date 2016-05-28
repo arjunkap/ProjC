@@ -86,22 +86,32 @@ public class ColourMap {
 		}
 		
 		private void updateColourMap(Rectangle2D.Double boundary,Color colour){
-			int xStartIndex,xEndIndex,yStartIndex,yEndIndex;
+			int iStartIndex,iEndIndex,jStartIndex,jEndIndex;
 			Vector2[] vectors=Calculator.getStartEndIndex(boundary, mapBoundary, visibility);
-			xStartIndex=(int) vectors[0].x;
-			yStartIndex=(int) vectors[0].y;
-			xEndIndex=(int) vectors[1].x;
-			yEndIndex=(int) vectors[1].y;
+			iStartIndex=(int) vectors[0].x;
+			jStartIndex=(int) vectors[0].y;
+			iEndIndex=(int) vectors[1].x;
+			jEndIndex=(int) vectors[1].y;
 			
-			for(int x=xStartIndex;x<xEndIndex;x++){
-				for(int y=yStartIndex;y<yEndIndex;y++){
-					colourMap[y][x].add(colour);
+			for(int i=iStartIndex;i<iEndIndex;i++){
+				for(int j=jStartIndex;j<jEndIndex;j++){
+					System.out.println("aa"+colourMap[i][j]);
+					colourMap[i][j].add(colour);
 				}
 			}
 		}
 		
+		private void initColourMap(){
+			this.colourMap=new Color[(int) Math.ceil(mapBoundary.height)][(int) Math.ceil(mapBoundary.width)];
+			for(int i=0;i<(int) Math.ceil(mapBoundary.height);i++){
+				for(int j=0;j<(int) Math.ceil(mapBoundary.width);j++){
+					colourMap[i][j]=Color.GRAY;
+				}
+			}
+		}
 		public Color[][] generateColourMap(){
 			//update worldObj
+			initColourMap();
 			
 			worldObjects=Calculator.objects(mapBoundary, world);
 			for(WorldObject object:worldObjects){

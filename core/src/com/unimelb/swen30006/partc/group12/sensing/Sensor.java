@@ -38,14 +38,14 @@ public class Sensor implements ISensing{
 					this.mapBoundary.y=pos.y-visibility;
 				
 				if(pos.x+visibility>800)
-					this.mapBoundary.width=visibility+(800-pos.x);
+					this.mapBoundary.width=800-mapBoundary.x;
 				else
-					this.mapBoundary.width=2*visibility;
+					this.mapBoundary.width=visibility+(pos.x-mapBoundary.x);
 				
 				if(pos.y+visibility>800)
-					this.mapBoundary.y=visibility+(800-pos.y);
+					this.mapBoundary.height=visibility+(800-pos.y);
 				else
-					this.mapBoundary.y=2*visibility;
+					this.mapBoundary.height=visibility+(pos.y-mapBoundary.y);
 				
 				this.pos=pos;
 				this.delta=delta;

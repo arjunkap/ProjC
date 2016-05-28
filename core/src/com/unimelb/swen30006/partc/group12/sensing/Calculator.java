@@ -13,8 +13,12 @@ public class Calculator {
 	
 
 	public static Vector2[] getStartEndIndex(Rectangle2D.Double boundary,Rectangle2D.Double mapBoundary,int visibility){
+		
 		double xStartIndex,xEndIndex,yStartIndex,yEndIndex;
 		Vector2[] vector=new Vector2[2];
+		vector[0]=new Vector2();
+		vector[1]=new Vector2();
+
 		
 		if(boundary.x<mapBoundary.x)
 			xStartIndex=0;
@@ -77,7 +81,7 @@ public class Calculator {
 		double objMinY=boundary.getMinY();
 		double objMaxX=boundary.getMaxX();
 		double objMaxY=boundary.getMaxY();
-		if(objMinX<mapBoundary.getMinX() || objMaxX>mapBoundary.getMaxX() || objMinY<mapBoundary.getMinY() || objMaxY>mapBoundary.getMaxY()){
+		if((objMinX<mapBoundary.getMinX()) || (objMaxX>mapBoundary.getMaxX()) || (objMinY<mapBoundary.getMinY()) || (objMaxY>mapBoundary.getMaxY())){
 			return false;
 		}
 		else

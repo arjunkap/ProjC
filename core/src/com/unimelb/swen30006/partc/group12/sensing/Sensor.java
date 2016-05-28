@@ -1,7 +1,7 @@
 package com.unimelb.swen30006.partc.group12.sensing;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Point2D.Double;
+
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
@@ -10,7 +10,7 @@ import com.unimelb.swen30006.partc.core.World;
 
 
 public class Sensor implements ISensing{
-		private Rectangle2D.Double mapBoundary;
+		private Rectangle2D.Double mapBoundary=new Rectangle2D.Double();
 		Point2D.Double pos;
 		private float delta;
 		World world;
@@ -23,7 +23,7 @@ public class Sensor implements ISensing{
 			this.world=world;
 		}
 		@Override
-		public boolean update(Double pos, float delta, int visibility) {
+		public boolean update(Point2D.Double pos, float delta, int visibility) {
 			// TODO Auto-generated method stub
 			try{
 				//

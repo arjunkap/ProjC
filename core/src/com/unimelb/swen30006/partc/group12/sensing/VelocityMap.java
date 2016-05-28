@@ -47,6 +47,7 @@ public class VelocityMap {
 		this.velocityMap=new Vector2[visibility*2][visibility*2];
 		for(int x=0;x<(visibility*2);x++){
 			for(int y=0;y<(visibility*2);y++){
+				velocityMap[y][x]=new Vector2();
 				velocityMap[y][x].x=0;
 				velocityMap[y][x].y=0;
 			}
@@ -64,6 +65,7 @@ public class VelocityMap {
 	}
 	
 	public Vector2[][] generateVelocityMap(){
+		
 		Vector2 carVelocity=new Vector2();
 		Point2D.Double currentPos;
 		Vector2 objVelocity=new Vector2();

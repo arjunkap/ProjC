@@ -44,6 +44,7 @@ public class SimpleKinematicAnalyser implements KinematicAnalyser{
                                          currentVelocity,
                                          objectWidth/2);
     mapObject.setVelocity(vel);
+    mapObject.setRelativeVelocity(currentVelocity.sub(vel));
     mapObject.setTimeToCollision(timeToColl);
   }
 

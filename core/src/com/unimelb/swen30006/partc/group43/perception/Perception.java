@@ -37,32 +37,6 @@ public class Perception implements IPerception{
   public Perception(){
   }
 
-  public void test(){
-    Range<Integer> a = new Range<Integer>(2,4);
-
-    CombinedCell[][] map = new CombinedCell[7][7];
-    boolean[][] b = new boolean[][]{{true,true,false,true,true,true,false},
-                                    {true,false,true,false,true,true,true},
-                                    {true,false,true,false,true,true,true},
-                                    {false,false,true,false,true,true,true},
-                                    {true,false,true,false,true,true,true},
-                                    {true,false,true,false,true,true,true},
-                                    {true,false,true,true,false,false,false}};
-
-    for(int i = 0 ; i < b.length ; i++){
-      for(int j = 0 ; j < b[0].length ; j ++){
-        map[i][j] = new CombinedCell(b[i][j],new Vector2(1,-1), Color.BLACK);
-      }
-    }
-
-    for(int i = 0 ; i < map.length ; i++){
-      for(int j = 0 ; j < map[0].length ; j ++){
-        System.out.print(map[i][j]);
-      }
-      System.out.print("\n");
-    }
-
-  }
 
 
 	public PerceptionResponse[] analyseSurroundings(boolean[][] spaceMap, Color[][] colorMap, Vector2[][] velMap){
@@ -108,6 +82,55 @@ public class Perception implements IPerception{
     }
 
     return newObjects;
+  }
+
+  public void test(){
+    Range<Integer> a = new Range<Integer>(2,4);
+
+    CombinedCell[][] map = new CombinedCell[7][7];
+    boolean[][] b = new boolean[][]{{true,true,false,true,true,true,false},
+                                    {true,false,true,false,true,true,true},
+                                    {true,false,true,false,true,true,true},
+                                    {false,false,true,false,true,true,true},
+                                    {true,false,true,false,true,true,true},
+                                    {true,false,true,false,true,true,true},
+                                    {true,false,true,true,false,false,false}};
+
+    for(int i = 0 ; i < b.length ; i++){
+      for(int j = 0 ; j < b[0].length ; j ++){
+        map[i][j] = new CombinedCell(b[i][j],new Vector2(1,-1), Color.BLACK);
+      }
+    }
+
+    for(int i = 0 ; i < map.length ; i++){
+      for(int j = 0 ; j < map[0].length ; j ++){
+        System.out.print(map[i][j]);
+      }
+      System.out.print("\n");
+    }
+    // Identify Objects
+    ArrayList<SpaceAnalyserReturn> returns = spaceAnalyser.getObjects(map);
+
+    // Create the objects
+    objects = createObjects(returns);
+
+    // Calculate Kinematic properties of the objects
+    for(MapObject object : objects){
+      kinematicAnalyser.calculateKinematics(object,map, new Vector2(0,1));
+    }
+
+    // Classfiy the Objects
+    for(MapObject object: objects){
+      classifier.classify(object,map);
+    }
+
+    PerceptionResponse[] ret = new PerceptionResponse[objects.size()];
+
+    for(int i = 0; i < objects.size(); i++){
+      ret[i] = objects.get(i).convertToPerceptionResponse();
+    }
+
+
   }
 
 }

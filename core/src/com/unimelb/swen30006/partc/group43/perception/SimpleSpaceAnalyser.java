@@ -27,7 +27,7 @@ public class SimpleSpaceAnalyser implements SpaceAnalyser{
   private CombinedCell[][] map = null;
   private int mapHeight;
   private int mapWidth;
-  private boolean logShow = true;
+  private boolean logShow = false;
 
   public ArrayList<SpaceAnalyserReturn> getObjects(CombinedCell[][] map){
 

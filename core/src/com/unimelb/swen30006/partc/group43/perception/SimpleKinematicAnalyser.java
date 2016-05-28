@@ -14,7 +14,7 @@ public class SimpleKinematicAnalyser implements KinematicAnalyser{
   public Vector2 carVel = null;
   public int mapHeight = 0;
   public int mapWidth = 0;
-  private boolean debugginOn = true;
+  private boolean debugginOn =false;
 
   public void calculateKinematics(KinematicAccess mapObject,CombinedCell[][] map,Vector2 currentVelocity){
 
@@ -53,18 +53,30 @@ public class SimpleKinematicAnalyser implements KinematicAnalyser{
     return  (  ((float) mapHeight) / carVel.len() );
   }
 
-  private float timeTillCollision(Point2D.Float a, Vector2 _aVel, Point2D.Float b, Vector2 _bVel,float minDist){
+  private float timeForObjectToReachMapEnd(Vector2 vel){
+    return  (  ((float) mapHeight) / vel.len() );
+  }
+
+  private float timeTillCollision(Point2D.Float a, Vector2 carVel, Point2D.Float b, Vector2 otherObjectVel,float minDist){
 
     // Only try for time required to reach the end of the map ( and safety factor of 2 )
     float alpha = 0.1f;
-    float timeMax = timeToReachMapEnd();
+    float timeMax;
+    if( carVel.len() == 0.0f && otherObjectVel.len() > 0.0f ){
+      timeMax = timeForObjectToReachMapEnd(otherObjectVel);
+    }else if (carVel.len() == 0.0f && otherObjectVel.len() == 0.0f ){
+      return -1.0f;
+    }else{
+      timeMax = timeToReachMapEnd();
+    }
+
     float time = 0.0f;
     float timeAtCollision = 0.0f;
 
     Vector2 aVec = new Vector2(a.x,a.y);
     Vector2 bVec = new Vector2(b.x,b.y);
-    Vector2 aVel = _aVel.cpy();
-    Vector2 bVel = _bVel.cpy();
+    Vector2 aVel = carVel.cpy();
+    Vector2 bVel = otherObjectVel.cpy();
 
     if(debugginOn){
       System.out.println(a);

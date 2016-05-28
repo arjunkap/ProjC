@@ -68,7 +68,7 @@ public class Sensor implements ISensing{
 		@Override
 		public boolean[][] getSpaceMap() {
 			// TODO Auto-generated method stub
-			this.spaceMap=new SpaceMap(world,visibility,pos);
+			this.spaceMap=new SpaceMap(world,visibility,pos,mapBoundary);
 			return spaceMap.generateSpaceMap();
 		}
 		@Override

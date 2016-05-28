@@ -17,10 +17,11 @@ public class SpaceMap {
 	private Rectangle2D.Double mapBoundary;
 
 	
-	public SpaceMap(World world,int visibility,Point2D.Double pos){
+	public SpaceMap(World world,int visibility,Point2D.Double pos,Rectangle2D.Double mapBoundary){
 		this.world=world;
 		this.visibility=visibility;
 		this.pos=pos;
+		this.mapBoundary=mapBoundary;
 	}
 	private void initSpaceMap(){
 		this.spaceMap=new boolean[visibility*2][visibility*2];

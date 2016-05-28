@@ -28,7 +28,7 @@ public class Planner implements IPlanning {
 		this.roads=r;
 		this.generator = new RouteGenerator(r);
 		this.driver = new Driver(c);
-		System.out.println(planRoute(p));
+		planRoute(p);
 		
 		
 	}

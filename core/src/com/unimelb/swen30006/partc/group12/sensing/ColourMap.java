@@ -95,7 +95,6 @@ public class ColourMap {
 			
 			for(int i=iStartIndex;i<iEndIndex;i++){
 				for(int j=jStartIndex;j<jEndIndex;j++){
-					System.out.println("aa"+colourMap[i][j]);
 					colourMap[i][j].add(colour);
 				}
 			}

@@ -25,9 +25,10 @@ public class SpaceMap {
 	}
 	private void initSpaceMap(){
 		this.spaceMap=new boolean[(int) Math.ceil(mapBoundary.height)][(int) Math.ceil(mapBoundary.width)];
-		for(boolean[] s1:spaceMap){
-			for(boolean s2:s1){
-				s2=true;
+		for(int i=0;i<(int) Math.ceil(mapBoundary.height);i++){
+			for(int j=0;j<(int) Math.ceil(mapBoundary.width);j++){
+				//not occupied;
+				spaceMap[i][j]=false; 
 			}
 		}
 	}

@@ -45,9 +45,10 @@ public class VelocityMap {
 	
 	private void initVelocityMap(){
 		this.velocityMap=new Vector2[(int) Math.ceil(mapBoundary.height)][(int) Math.ceil(mapBoundary.width)];
-		for(Vector2[] v1:velocityMap){
-			for(Vector2 v2:v1){
-				v2=new Vector2(0,0);
+		for(int i=0;i<(int) Math.ceil(mapBoundary.height);i++){
+			for(int j=0;j<(int) Math.ceil(mapBoundary.width);j++){
+				velocityMap[i][j].x=0;
+				velocityMap[i][j].y=0;
 			}
 		}
 	}

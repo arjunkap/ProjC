@@ -19,6 +19,8 @@ import com.badlogic.gdx.math.Vector2;
 import java.awt.geom.Point2D;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.io.PrintWriter;
+import java.io.File;
 
 /**
  * This class is the implementation of IPerception Interface.
@@ -43,15 +45,25 @@ public class Perception implements IPerception{
 
 	public PerceptionResponse[] analyseSurroundings(boolean[][] spaceMap, Color[][] colorMap, Vector2[][] velMap){
 
-    /*
-    system.out.println(colormap);
-    for(int i = 0 ; i < colormap.length ; i++){
-      for(int j = 0 ; j <colormap[0].length ; j ++){
-        system.out.print(colormap[i][j] + ",");
-      }
-        System.out.print("\n");
+
+    /*( DCOMMENTS
+    String filePathString = "colorout.txt";
+    File f = new File(filePathString);
+    //if(!f.exists() && !f.isDirectory()) { 
+    //System.out.println("RED is : " + Color.RED);
+    if(false) { 
+        // do something
+        try{
+          PrintWriter writer = new PrintWriter(filePathString, "UTF-8");
+          for(int i = 0 ; i <colorMap.length ; i++){
+            for(int j = 0 ; j <colorMap[0].length ; j ++){
+                writer.print(colorMap[i][j] + ",");
+            }
+              writer.print("\n");
+          }
+        }catch(Exception e){}
     }
-    */
+    )*/
 
     CombinedCell[][] map = new CombinedCell[spaceMap.length][spaceMap[0].length];
     for(int i = 0 ; i < spaceMap.length ; i++){

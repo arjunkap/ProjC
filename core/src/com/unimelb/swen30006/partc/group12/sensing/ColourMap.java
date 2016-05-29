@@ -96,6 +96,19 @@ public class ColourMap {
 			for(int i=iStartIndex;i<iEndIndex;i++){
 				for(int j=jStartIndex;j<jEndIndex;j++){
 					colourMap[i][j].add(colour);
+
+          /*( DCOMMENTS
+					//colourMap[i][j] = new Color(colour);
+          System.out.println(colour);
+          System.out.println(colourMap[i][j]);
+          System.out.println(colourMap[i][j]);
+          try {
+              Thread.sleep(1000);                 //1000 milliseconds is one second.
+          } catch(InterruptedException ex) {
+              Thread.currentThread().interrupt();
+          }
+          )*/
+
 				}
 			}
 		}
@@ -104,7 +117,7 @@ public class ColourMap {
 			this.colourMap=new Color[(int) Math.ceil(mapBoundary.height)][(int) Math.ceil(mapBoundary.width)];
 			for(int i=0;i<(int) Math.ceil(mapBoundary.height);i++){
 				for(int j=0;j<(int) Math.ceil(mapBoundary.width);j++){
-					colourMap[i][j]=Color.GRAY;
+					colourMap[i][j]= new Color();
 				}
 			}
 		}
@@ -130,7 +143,7 @@ public class ColourMap {
 			updateColourMap_intersection();
 			
 			//update environment
-			updateColourMap_environment();
+			//updateColourMap_environment();
 			
 			return colourMap;
 		}

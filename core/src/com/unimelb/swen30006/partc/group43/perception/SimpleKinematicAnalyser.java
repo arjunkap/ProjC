@@ -14,7 +14,7 @@ public class SimpleKinematicAnalyser implements KinematicAnalyser{
   public Vector2 carVel = null;
   public int mapHeight = 0;
   public int mapWidth = 0;
-  private boolean debugginOn =false;
+  private boolean debugginOn = false;
 
   public void calculateKinematics(KinematicAccess mapObject,CombinedCell[][] map,Vector2 currentVelocity){
 

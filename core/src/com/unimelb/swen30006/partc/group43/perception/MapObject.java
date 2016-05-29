@@ -25,7 +25,7 @@ public class MapObject implements KinematicAccess,ClassifierAccess{
   private Vector2 velocity;
   private Vector2 relativeVelocity;
   private float timeToCollision;
-  private HashMap<String,Object> information = new HashMap<String,Object>();
+  public HashMap<String,Object> information = new HashMap<String,Object>();
   private Classification objectType;
 
   public MapObject(Point2D.Float pos, ArrayList<Point> shape, float width, float length, float distance){
@@ -110,6 +110,12 @@ public class MapObject implements KinematicAccess,ClassifierAccess{
   }
   public void setTimeToCollision(Float timeToCollision){
     this.timeToCollision = timeToCollision;
+  }
+
+  public String toString(){
+    String ret = "";
+    ret = ret + "Width :" + String.valueOf(width) + " Length : " + String.valueOf(length) ;
+    return ret;
   }
 
 }

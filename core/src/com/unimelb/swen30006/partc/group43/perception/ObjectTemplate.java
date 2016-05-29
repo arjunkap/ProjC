@@ -40,6 +40,25 @@ public class ObjectTemplate{
 
   public boolean isWithinRange(Float length, Float width, Float speed, ArrayList<Color> color){
 
+    /*( DCOMMENTS
+    if(typeWithinRange == Classification.Sign && false){
+              System.out.print("Testing:");
+          for(Color c : color){
+              System.out.print(c +",");
+          }
+              System.out.print("\n");
+              System.out.print("Alowed :");
+          for(Color c : colorRange){
+              System.out.print(c +",");
+          }
+              System.out.print("Result:");
+              System.out.print(isColorsInRange(color));
+              System.out.print("\n");
+
+    }
+    )*/
+
+
     if( lengthRange.isInRange(length) &&
         widthRange.isInRange(width) &&
         speedRange.isInRange(speed) &&
@@ -63,7 +82,7 @@ public class ObjectTemplate{
 
     for(Color col : colors){
       for(Color c : colorRange){
-        if( col == c) return true;
+        if( col.toString().equals(c.toString())) return true;
       }
     }
 
@@ -74,7 +93,7 @@ public class ObjectTemplate{
   private boolean isColorInRange(Color color){
 
     for(Color c : colorRange){
-      if( c == color) return true;
+      if( c.toString() == color.toString()) return true;
     }
 
     return false;

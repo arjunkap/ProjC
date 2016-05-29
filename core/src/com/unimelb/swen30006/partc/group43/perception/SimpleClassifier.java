@@ -16,8 +16,12 @@ import java.awt.Point;
 public class SimpleClassifier implements Classifier {
 
   ArrayList<ObjectTemplate> objectTemplates = new ArrayList<ObjectTemplate> ();
+  ArrayList<Color> trafficColors = new ArrayList<Color>();
 
   public SimpleClassifier(){
+    trafficColors.add(Color.RED);
+    trafficColors.add(Color.GREEN);
+    trafficColors.add(Color.YELLOW);
 
     /*
     For reference :
@@ -30,12 +34,13 @@ public class SimpleClassifier implements Classifier {
 
     //Sign
     ArrayList<Color> signColor = new ArrayList<Color>();
-    signColor.add(new Color(180.0f,209.0f,18.0f,1.0f));
+    signColor.add(new Color(180.0f/255f,209.0f/255f,18.0f/255f,1.0f));
     objectTemplates.add( new ObjectTemplate( new Range<Float>(1.0f,3.0f),
                                    new Range<Float>(1.0f,10.0f),
                                    new Range<Float>(0.0f,0.0f),
                                    signColor,
                                    Classification.Sign));
+
     // Building
     objectTemplates.add( new ObjectTemplate( new Range<Float>(20.0f,90.0f),
                                    new Range<Float>(20.0f,90.0f),
@@ -44,19 +49,18 @@ public class SimpleClassifier implements Classifier {
                                    Classification.Building));
 
     // Traffic Light
-    ArrayList<Color> trafficColors = new ArrayList<Color>();
-    trafficColors.add(Color.RED);
-    trafficColors.add(Color.GREEN);
-    trafficColors.add(Color.YELLOW);
-    objectTemplates.add( new ObjectTemplate( new Range<Float>(20.0f,90.0f),
-                                   new Range<Float>(20.0f,90.0f),
+    ObjectTemplate lighTemplate =  new ObjectTemplate( new Range<Float>(2.0f,3.0f),
+                                   new Range<Float>(2.0f,3.0f),
                                    new Range<Float>(0.0f,0.0f),
                                    trafficColors,
-                                   Classification.TrafficLight));
+                                   Classification.TrafficLight);
+    //lighTemplate.setAllowAnyColorTrue();
+    objectTemplates.add(lighTemplate);
+
 
     // Car
-    ObjectTemplate carTemplate = new ObjectTemplate( new Range<Float>(2.0f,20.0f),
-                                   new Range<Float>(2.0f,20.0f),
+    ObjectTemplate carTemplate = new ObjectTemplate( new Range<Float>(4.0f,20.0f),
+                                   new Range<Float>(4.0f,20.0f),
                                    new Range<Float>(0.0f,200.0f),
                                    new ArrayList<Color>(),
                                    Classification.Car);
@@ -71,6 +75,7 @@ public class SimpleClassifier implements Classifier {
                                    new Range<Float>(0.0f,0.0f),
                                    laneMarkingColor,
                                    Classification.LaneMarking);
+    objectTemplates.add(laneMarkingTemplate);
 
     // RoadMarking
     ArrayList<Color> roadMarkingColor = new ArrayList<Color>();
@@ -80,6 +85,7 @@ public class SimpleClassifier implements Classifier {
                                    new Range<Float>(0.0f,0.0f),
                                    roadMarkingColor,
                                    Classification.RoadMarking);
+    objectTemplates.add(RoadMarkingTemplate);
 
   }
 
@@ -96,6 +102,22 @@ public class SimpleClassifier implements Classifier {
                           colorsAtMapObject(mapObject,map))){
         Classification type  = m.getType();
         if( type == Classification.TrafficLight) handleTrafficLight(mapObject,map);
+
+        /*( DELETE COMMENTS
+        if( type == Classification.TrafficLight){
+          System.out.println("Traffic Light Detected");
+          System.out.println(((MapObject) mapObject).information.get("State"));
+        }
+        if(true){
+          System.out.println(type);
+          System.out.println(mapObject);
+          System.out.println("-------------");
+          for(Color c : colorsAtMapObject(mapObject,map)){
+            //System.out.print(c +",");
+          }
+        }
+        //)*/
+
         mapObject.setObjectType(m.getType());
         break;
       }
@@ -103,22 +125,32 @@ public class SimpleClassifier implements Classifier {
 
   }
 
+  private boolean colorArrayContains(ArrayList<Color> colors,Color c){
+
+    for(Color col : colors){
+        if( col.toString().equals(c.toString())) return true;
+    }
+
+    return false;
+  }
+
+
   /**
    * Determine the state which the traffic light is in.
    */
   private boolean handleTrafficLight(ClassifierAccess mapObject, CombinedCell[][] map){
     ArrayList<Color> colors = colorsAtMapObject(mapObject, map);
-    if( colors.contains(Color.YELLOW)){
+    if(colorArrayContains(colors,Color.YELLOW)){
       mapObject.setInformation("State",TrafficLight.State.Amber);
       return true;
     }
 
-    if( colors.contains(Color.RED)){
+    if( colorArrayContains(colors,Color.RED)){
       mapObject.setInformation("State",TrafficLight.State.Red);
       return true;
     }
 
-    if( colors.contains(Color.GREEN)){
+    if( colorArrayContains(colors,Color.GREEN)){
       mapObject.setInformation("State",TrafficLight.State.Green);
       return true;
     }

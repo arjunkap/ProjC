@@ -41,11 +41,11 @@ public class Planner implements IPlanning {
 
 	@Override
 	public void update(PerceptionResponse[] results, float delta) {	
-		priorityRanker.prioritise(results);
-		driver.drive(roads,currRoute, priorityRanker.getRankedCars(), priorityRanker.getTrafficLight(), priorityRanker.getRoadMarking(), priorityRanker.getLaneMarking(),delta);	
+	//	priorityRanker.prioritise(results);
+	//	driver.drive(roads,currRoute, priorityRanker.getRankedCars(), priorityRanker.getTrafficLight(), priorityRanker.getRoadMarking(), priorityRanker.getLaneMarking(),delta);	
 		//driver.drive(roads,currRoute, cars,tl , rm, lm,delta);	
 		
-		//driver.drive(roads,currRoute, cars, tl, rm, lm,delta);	
+		driver.drive(roads,currRoute, cars, tl, rm, lm,delta);	
 		
 		this.c.update(delta);
 		

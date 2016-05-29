@@ -2,17 +2,17 @@ package com.unimelb.swen30006.partc.group50.planning.RoadHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+
 import java.util.Iterator;
 import java.util.PriorityQueue;
-import java.util.Set;
+
 
 import com.unimelb.swen30006.partc.ai.interfaces.PerceptionResponse;
 import com.unimelb.swen30006.partc.ai.interfaces.PerceptionResponse.Classification;
 
 public class PriorityRanker {
 
-	private PerceptionResponse[] priority;
+	
 	PriorityQueue<PerceptionResponse> cars = new PriorityQueue<PerceptionResponse>();
 	PerceptionResponse trafficL, roadM, laneM;
 
@@ -53,7 +53,7 @@ public class PriorityRanker {
 			}else o.remove();
 
 		}
-		if(cars.size()>1) rankCar(cars);
+		if(cars.size()>1) rankCar(cars); // rank based on distance to current car
 		
 		switch(TL.size()){
 		case 0:
@@ -111,7 +111,7 @@ public class PriorityRanker {
 	}
 	
 	private void rankCar(ArrayList<PerceptionResponse> c){
-		float minD = Float.MAX_VALUE, minT = Float.MAX_VALUE;
+		float minD = Float.MAX_VALUE;
 		PerceptionResponse tmp,min=c.get(0);;
 		while(!c.isEmpty()){
 			Iterator<PerceptionResponse> d=c.iterator();

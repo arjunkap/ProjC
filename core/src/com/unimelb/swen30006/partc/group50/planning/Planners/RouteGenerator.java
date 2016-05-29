@@ -20,7 +20,7 @@ public class RouteGenerator {
 	}
 
 	public Route generateRoute(Point2D.Double dest, Point2D.Double curr){
-		Road lmfao = closestRoad(dest);
+		Road destRoad = closestRoad(dest);
 		Road currRoad = closestRoad(curr);
 		ArrayList<Node> endPt = new ArrayList<Node>();
 		if(m.whichIsThis(currRoad.getEndPos())!=null)
@@ -28,14 +28,14 @@ public class RouteGenerator {
 		if(m.whichIsThis(currRoad.getStartPos())!=null)
 			endPt.add(m.whichIsThis(currRoad.getStartPos()));
 
-		if(lmfao == null) return null;
-		dest = getNewDest(dest, lmfao);
+		if(destRoad == null) return null;
+		dest = getNewDest(dest, destRoad);
 		Route r = new Route(dest);
 		ArrayList<Node> next = new ArrayList<Node>();
-		if(m.whichIsThis(lmfao.getStartPos())!=null)
-			next.add(m.whichIsThis(lmfao.getStartPos()));
-		if(m.whichIsThis(lmfao.getEndPos())!=null)
-			next.add(m.whichIsThis(lmfao.getEndPos()));
+		if(m.whichIsThis(destRoad.getStartPos())!=null)
+			next.add(m.whichIsThis(destRoad.getStartPos()));
+		if(m.whichIsThis(destRoad.getEndPos())!=null)
+			next.add(m.whichIsThis(destRoad.getEndPos()));
 
 		while(!endPt.contains(r.peek())){
 			Node tmp = ScoreComparator(next,curr);
@@ -61,14 +61,6 @@ public class RouteGenerator {
 			}
 		}
 		return tmp;
-	}
-
-	private float getDistance(Point2D.Double p1,Point2D.Double p2){
-		return (float) p1.distance(p2);
-	}
-
-	private float getDistance(double x1,double y1,double x2,double y2){
-		return (float) Math.sqrt(Math.pow(x1-x2, 2)+Math.pow(y1-y2,2));
 	}
 
 	private float getDistance(Point2D.Double p1,double d, double e){

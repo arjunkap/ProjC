@@ -1,77 +1,85 @@
 package com.unimelb.swen30006.partc.group50.planning.RoadHandler;
 
+
 import java.awt.geom.Point2D;
 import java.util.HashMap;
-import java.util.Stack;
+import java.util.PriorityQueue;
+
 
 import com.badlogic.gdx.math.Vector2;
 import com.unimelb.swen30006.partc.group50.planning.Planners.Route;
 import com.unimelb.swen30006.partc.ai.interfaces.PerceptionResponse;
-import com.unimelb.swen30006.partc.core.infrastructure.TrafficLight;
 import com.unimelb.swen30006.partc.core.objects.Car;
 import com.unimelb.swen30006.partc.group50.planning.vectormap.Node;
+import com.unimelb.swen30006.partc.roads.Road;
 
 public class Driver {
-	private enum Intent{
+	private enum Intent{ // to know the direction the car currently has and next direction it intends to move
 		NORTH,WEST,SOUTH,EAST,STOP
 	}
 
-	private enum State{
-		NORMAL,CARBLOCK,UTURN,REDLIGHT
+	private enum ActionState{ // states of the car. Could have make interfaces for them, but we stick with the submitted design
+		NORMAL,CARHANDLE,UTURN,REDLIGHT,AVOID 
 	}
+	
+	
+	// AVOID STATE, first intended to use if the perception can get lane marking
+	// the algorithm should be if there is an obstacle in current lane
+	// and there is >1 lane and check all possible lanes
+	// maneuver to the first lane found that is not occupied
+	// otherwise just follow the car (if the obstacle is car) and stop if the obstacle is a static one
 
-	private enum carBlockState{
-		AVOIDCAR,STOP,FOLLOWCAR
-	}
-
+	
 	private Intent currIntent=null,nextIntent;
 	private Car c;
 	private Node currDest=null, nextDest;
-	private HashMap<Intent,Float> holyAngels=new HashMap<Driver.Intent, Float>();
+	private HashMap<Intent,Float> intendedAngles=new HashMap<Driver.Intent, Float>();
 	private float currAngle;
 	private final float turningVel =20f;
 	private Route route=null;
 	private final float TURN_RATE=75f;
-	private State state;
+	private ActionState actionState;
 
+	private final float MAX_ROAD_DISTANCE = 50f;
 
 	public Driver(Car c){
 		this.c=c;
-		this.holyAngels.put(Intent.NORTH,90f);
-		this.holyAngels.put(Intent.SOUTH,270f);
-		this.holyAngels.put(Intent.WEST,180f);
-		this.holyAngels.put(Intent.EAST,0f);
+		this.intendedAngles.put(Intent.NORTH,90f);
+		this.intendedAngles.put(Intent.SOUTH,270f);
+		this.intendedAngles.put(Intent.WEST,180f);
+		this.intendedAngles.put(Intent.EAST,0f);
 		this.currAngle=0f;
-		this.state = State.NORMAL;
-
+		this.actionState = ActionState.NORMAL;
 	}
 
-	public void drive(Route r,Stack<PerceptionResponse> cars, PerceptionResponse tl, PerceptionResponse rm, PerceptionResponse lm,float delta){	
+	public void drive(Road[] roads, Route r,PriorityQueue<PerceptionResponse> cars, PerceptionResponse tl, PerceptionResponse rm, PerceptionResponse lm,float delta){	
 		if(r.isNew()){
 			this.route = r;
 			updateDest();
 			currAngle=c.getVelocity().angle();
-			if((currAngle+150)%360<holyAngels.get(currIntent) || (currAngle+210)%360>holyAngels.get(currIntent)) state=State.UTURN;
+			if((currAngle+150)%360<intendedAngles.get(currIntent) || (currAngle+210)%360>intendedAngles.get(currIntent)) actionState=ActionState.UTURN;
 		}
-		if(tl==null)state=(state==State.UTURN)? state:State.NORMAL;
+		
+		if(tl==null)actionState=(actionState==ActionState.UTURN)? actionState:ActionState.NORMAL;
 		else{
 			Object tlState = tl.information.get("State");
-			if(tlState == "Red") state = State.REDLIGHT;
-			else state = State.NORMAL;
+			if(tlState == "Red") actionState = ActionState.REDLIGHT;
+			else actionState = ActionState.NORMAL;
 		}
+		
 		if (cars!=null){
-			if (cars.peek().timeToCollision < tl.timeToCollision){
-				state = State.CARBLOCK;		
+			if (cars.peek().distance < tl.distance){ // check whether there is a car between the current car and upcoming traffic light
+				if (closestRoad(c.getPosition(),roads).getNumLanes()<=1){
+					actionState = ActionState.CARHANDLE;	
+				} else{
+					actionState = ActionState.AVOID;
+				}				
 			}
-
-
-
 		}
-
 		currAngle=c.getVelocity().angle();
-		switch(state){
-		case CARBLOCK:
-			
+		switch(actionState){
+		case CARHANDLE:
+			maintainDistance(cars.peek().velocity);	
 			break;
 		case NORMAL:
 			driveNormal(delta);
@@ -82,16 +90,17 @@ public class Driver {
 		case REDLIGHT:
 			if(tl.distance<40) c.brake();
 			else driveNormal(delta);
-			break;		
+			break;
+		case AVOID:
+			break;
 		default:
 			break;
-
 		}
-
-
-
-
-
+	}
+	
+	private void maintainDistance(Vector2 relativeVelocity){
+		if(Math.sqrt(Math.pow(relativeVelocity.x, 2)+Math.pow(relativeVelocity.y, 2))<=0)c.brake();
+		else c.accelerate();
 	}
 
 	private void uturn(float delta){
@@ -103,41 +112,43 @@ public class Driver {
 				maintainVelocity(15);
 				c.turn(-delta*150f);
 			}else{
-				if((currAngle+180)%360>(holyAngels.get(currIntent)+180)%360){
+				if((currAngle+180)%360>(intendedAngles.get(currIntent)+180)%360){
 					maintainVelocity(15);
 					c.turn(-150f*delta);
 				}
 				else{
-					state = State.NORMAL;
+					actionState = ActionState.NORMAL;
 				}
 			}
 			break;
+			
 		case WEST:
 			if(c.getVelocity().x*dummy.x <= 0){
 				maintainVelocity(15);
 				c.turn(-delta*150f);
 			}else{
-				if(currAngle>holyAngels.get(currIntent)){
+				if(currAngle>intendedAngles.get(currIntent)){
 					maintainVelocity(15);
 					c.turn(-150f*delta);
 				}
 				else{
-					state = State.NORMAL;
+					actionState = ActionState.NORMAL;
 				}
 			}
 			break;
+			
 		case NORTH:
 		case SOUTH:
 			if(c.getVelocity().y*dummy.y <= 0){
 				maintainVelocity(15);
 				c.turn(-delta*150f);
 			}else{
-				if(currAngle>holyAngels.get(currIntent)){
+				if(currAngle>intendedAngles.get(currIntent)){
 					maintainVelocity(15);
 					c.turn(-150f*delta);
 				}
 				else{
-					state = State.NORMAL;
+					actionState = ActionState.NORMAL;
 				}
 			}
 			break;
@@ -160,7 +171,7 @@ public class Driver {
 					else maintainVelocity(10);
 				}
 				try{
-					if(holyAngels.get(nextIntent)-holyAngels.get(currIntent)>0) leftTurn(delta);
+					if(intendedAngles.get(nextIntent)-intendedAngles.get(currIntent)>0) leftTurn(delta);
 					else rightTurn(delta);
 				}catch(NullPointerException e){
 				}
@@ -176,7 +187,7 @@ public class Driver {
 					if(Math.abs(c.getPosition().y-currDest.getY())<5) c.brake();
 				}
 				try{
-					if(holyAngels.get(nextIntent)-holyAngels.get(currIntent)>0) leftTurn(delta);
+					if(intendedAngles.get(nextIntent)-intendedAngles.get(currIntent)>0) leftTurn(delta);
 					else rightTurn(delta);
 				}catch(NullPointerException e){
 				}
@@ -240,7 +251,7 @@ public class Driver {
 	}
 
 	private void turn(float delta) {
-		float angle=holyAngels.get(nextIntent);
+		float angle=intendedAngles.get(nextIntent);
 		if(nextIntent==Intent.EAST || currIntent==Intent.EAST){
 			angle=(angle+180)%360;
 			currAngle=(currAngle+180)%360;
@@ -261,7 +272,7 @@ public class Driver {
 	}
 
 	private void maintainAngle(float delta) {
-		float angle=holyAngels.get(currIntent);
+		float angle=intendedAngles.get(currIntent);
 		if(currIntent==Intent.EAST){
 			angle=(angle+180)%360;
 			currAngle=(currAngle+180)%360;
@@ -282,7 +293,18 @@ public class Driver {
 
 	}
 
-
+	private Road closestRoad(Point2D.Double pos, Road[] roadArray){
+		float minDist = Float.MAX_VALUE;
+		Road minRoad = null;
+		for(Road r: roadArray){
+			float tmpDist = r.minDistanceTo(pos);
+			if(tmpDist < minDist){
+				minDist = tmpDist;
+				minRoad = r;
+			}
+		}
+		return (minDist < MAX_ROAD_DISTANCE) ? minRoad : null;
+	}
 
 
 }
